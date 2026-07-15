@@ -1,0 +1,32 @@
+---
+/**
+ * Liquid-glass float — RESERVED for live/floating marketplace elements only
+ * (arriving bid card, sticky CTA, verified/trust badges). Budget: ≤3 element
+ * types per page. `sheen` adds the specular top edge (use on the hero bid card).
+ * Fallbacks for reduced-transparency / no-backdrop-filter are handled globally.
+ */
+interface Props {
+  sheen?: boolean;
+  pad?: 'sm' | 'md' | 'lg';
+  as?: string;
+  class?: string;
+}
+const { sheen = false, pad = 'md', as = 'div', class: className = '' } = Astro.props;
+const Tag = as as keyof HTMLElementTagNameMap;
+---
+
+<Tag class:list={['glass', { 'glass-sheen': sheen }, `gpad-${pad}`, className]}>
+  <slot />
+</Tag>
+
+<style>
+  .gpad-sm {
+    padding: clamp(0.9rem, 3vw, 1.2rem);
+  }
+  .gpad-md {
+    padding: clamp(1.2rem, 4vw, 1.6rem);
+  }
+  .gpad-lg {
+    padding: clamp(1.6rem, 5vw, 2.25rem);
+  }
+</style>

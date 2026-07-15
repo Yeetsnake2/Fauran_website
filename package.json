@@ -1,0 +1,28 @@
+{
+  "name": "fauran-waitlist",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Fauran waitlist / marketing site — Pakistan's bid-and-book services marketplace.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "check": "astro check",
+    "test:rules": "vitest run"
+  },
+  "dependencies": {
+    "@fontsource-variable/bricolage-grotesque": "^5.2.5",
+    "@fontsource-variable/hanken-grotesk": "^5.2.5",
+    "@fontsource/geist-mono": "^5.2.5",
+    "astro": "^7.0.9",
+    "firebase": "^11.10.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.11",
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5.6.3"
+  }
+}

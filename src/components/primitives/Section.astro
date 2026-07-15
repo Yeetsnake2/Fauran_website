@@ -1,0 +1,70 @@
+---
+/**
+ * Section shell — guarantees identical vertical rhythm + gutters everywhere.
+ * Every page section should use this. Optional eyebrow + heading + lead.
+ *
+ * Props:
+ *  - id: anchor id
+ *  - eyebrow: mono label text (structural — states section identity)
+ *  - heading: section h2 (uses .t-h2)
+ *  - lead: supporting paragraph (uses .t-lead)
+ *  - align: 'start' | 'center' header alignment
+ *  - class: extra classes on <section>
+ */
+interface Props {
+  id?: string;
+  eyebrow?: string;
+  heading?: string;
+  lead?: string;
+  align?: 'start' | 'center';
+  class?: string;
+  headingId?: string;
+}
+const {
+  id,
+  eyebrow,
+  heading,
+  lead,
+  align = 'start',
+  class: className = '',
+  headingId,
+} = Astro.props;
+const hasHeader = Boolean(eyebrow || heading || lead);
+---
+
+<section id={id} class:list={['section', className]}>
+  <div class="wrap">
+    {
+      hasHeader && (
+        <header class:list={['sec-head', `is-${align}`]}>
+          {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+          {heading && (
+            <h2 id={headingId} class="t-h2">
+              {heading}
+            </h2>
+          )}
+          {lead && <p class="t-lead">{lead}</p>}
+        </header>
+      )
+    }
+    <slot />
+  </div>
+</section>
+
+<style>
+  .sec-head {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    max-width: 42rem;
+    margin-bottom: clamp(2rem, 5vw, 3rem);
+  }
+  .sec-head.is-center {
+    margin-inline: auto;
+    align-items: center;
+    text-align: center;
+  }
+  .sec-head .t-lead {
+    margin-top: 0.15rem;
+  }
+</style>

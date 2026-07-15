@@ -1,0 +1,339 @@
+---
+/**
+ * PhoneMockup — a neomorphic phone shell that crossfades through real Fauran
+ * app screens. Sits in the hero in place of an abstract illustration.
+ *
+ * Material rules (DESIGN_SYSTEM.md):
+ *  - The shell is carved from the same sage-porcelain surface as the rest of the
+ *    site: `.neo-raised-lg` body + a `--neo-inset` screen well. No glass here —
+ *    the screenshots are opaque, so the only reflection is ONE static gradient
+ *    sheen. No `backdrop-filter` / `filter: blur()` (strict blur budget).
+ *  - The screen well reserves `aspect-ratio: 600 / 1252` (the image size), so the
+ *    crossfade never shifts layout and the covers never distort.
+ *
+ * Screens are referenced from `public/screens/` as plain URLs (no ESM import,
+ * no build-time dependency on the assets existing yet).
+ *
+ * Behaviour: auto-advance ~2.8s, crossfade ~0.5s, pause on hover/focus, dot
+ * navigation, and full `prefers-reduced-motion` handling (CSS + JS guard).
+ *
+ * Props: optional `class` passthrough so the parent can position the region.
+ */
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+
+const screens = [
+  {
+    src: '/screens/01-login.webp',
+    alt: 'Fauran app sign-in screen with the Fauran logo and Welcome Back',
+  },
+  {
+    src: '/screens/02-home.webp',
+    alt: 'Fauran home screen — post a task and browse services like Cleaning, Repairs and Electrical',
+  },
+  {
+    src: '/screens/03-post.webp',
+    alt: 'Posting a task in Fauran — title, category and your offered hourly rate',
+  },
+  {
+    src: '/screens/04-offers.webp',
+    alt: 'A customer reviewing a tasker’s offer, with options to counter or approve',
+  },
+  {
+    src: '/screens/05-tasker.webp',
+    alt: 'A tasker’s current jobs, with call, chat and submit-hours actions',
+  },
+];
+---
+
+<div
+  class:list={['pm', className]}
+  role="group"
+  aria-roledescription="carousel"
+  aria-label="Fauran app screens"
+  data-phone-mockup
+>
+  <!-- neomorphic phone shell (same surface + dual-light as the site) -->
+  <div class="pm-phone neo-raised-lg">
+    <!-- centered top speaker + camera detail (pure CSS, tokenized) -->
+    <div class="pm-notch" aria-hidden="true">
+      <span class="pm-speaker"></span>
+      <span class="pm-cam"></span>
+    </div>
+
+    <!-- sunken screen well; reserves the image aspect-ratio so there is zero CLS -->
+    <div class="pm-screen">
+      {
+        screens.map((screen, i) => (
+          <img
+            class:list={['pm-slide', { 'is-active': i === 0 }]}
+            data-pm-slide
+            src={screen.src}
+            alt={screen.alt}
+            width="600"
+            height="1252"
+            loading="eager"
+            fetchpriority={i === 0 ? undefined : 'low'}
+            decoding="async"
+            aria-hidden={i === 0 ? undefined : 'true'}
+          />
+        ))
+      }
+      <!-- ONE static specular streak — subtle, opaque screenshots stay legible -->
+      <span class="pm-sheen" aria-hidden="true"></span>
+    </div>
+  </div>
+
+  <!-- indicator dots (real buttons, 44px tap targets) -->
+  <div class="pm-dots">
+    {
+      screens.map((_, i) => (
+        <button
+          type="button"
+          class="pm-dot"
+          data-pm-dot
+          aria-label={`Show screen ${i + 1} of ${screens.length}`}
+          aria-current={i === 0 ? 'true' : 'false'}
+        >
+          <span class="pm-dot-mark" aria-hidden="true" />
+        </button>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .pm {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(0.9rem, 3vw, 1.25rem);
+  }
+
+  /* — phone body: neo-raised-lg gives surface fill, dual-light shadow, radius-xl — */
+  .pm-phone {
+    position: relative;
+    width: clamp(230px, 72vw, 288px);
+    max-width: 100%;
+    padding: clamp(0.55rem, 2.2vw, 0.75rem);
+    padding-top: clamp(0.7rem, 3vw, 1rem);
+  }
+
+  .pm-notch {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    margin-bottom: clamp(0.4rem, 2vw, 0.6rem);
+  }
+  .pm-speaker {
+    width: 2.75rem;
+    height: 0.32rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-sunken);
+    box-shadow: var(--neo-inset);
+  }
+  .pm-cam {
+    width: 0.42rem;
+    height: 0.42rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-sunken);
+    box-shadow: var(--neo-inset);
+  }
+
+  /* — screen well: sunken, clipped, aspect-ratio reserved to match the images — */
+  .pm-screen {
+    position: relative;
+    aspect-ratio: 600 / 1252;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-sunken);
+    box-shadow: var(--neo-inset);
+  }
+
+  /* stacked screens — crossfade the active one in, no distortion, no CLS */
+  .pm-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    opacity: 0;
+    transition: opacity 0.5s var(--ease-out);
+    will-change: opacity;
+  }
+  .pm-slide.is-active {
+    opacity: 1;
+  }
+
+  /* single static diagonal light reflection — very low opacity so screens read */
+  .pm-sheen {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(
+      125deg,
+      rgba(255, 255, 255, 0) 0 36%,
+      rgba(255, 255, 255, 0.16) 43%,
+      rgba(255, 255, 255, 0.04) 50%,
+      rgba(255, 255, 255, 0) 58% 100%
+    );
+  }
+
+  /* — indicator dots: real buttons, ≥44px tappable, small carved dot inside — */
+  .pm-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.1rem;
+  }
+  .pm-dot {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+    width: 2.75rem; /* 44px tap target */
+    height: 2.75rem;
+    display: grid;
+    place-items: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .pm-dot-mark {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-sunken);
+    box-shadow: var(--neo-inset);
+    transition:
+      width 0.3s var(--ease-quint),
+      background 0.3s var(--ease-out),
+      box-shadow 0.3s var(--ease-out);
+  }
+  .pm-dot:hover .pm-dot-mark {
+    background: var(--color-mint);
+    box-shadow: none;
+  }
+  .pm-dot[aria-current='true'] .pm-dot-mark {
+    width: 1.35rem;
+    background: var(--color-forest);
+    box-shadow: none;
+  }
+
+  /* Reduced motion: no crossfade, no dot morph — screens switch instantly.
+     (Global CSS also neutralises transitions; this is the explicit local guard.) */
+  @media (prefers-reduced-motion: reduce) {
+    .pm-slide {
+      transition: none;
+    }
+    .pm-dot-mark {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // One bundled module for all instances: scope every query to its own root so
+  // multiple <PhoneMockup /> on a page never collide.
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  document.querySelectorAll('[data-phone-mockup]').forEach((root) => {
+    const slides = Array.from(root.querySelectorAll('[data-pm-slide]'));
+    const dots = Array.from(root.querySelectorAll('[data-pm-dot]'));
+    if (slides.length < 2) return;
+
+    const INTERVAL = 2800;
+    let index = Math.max(
+      0,
+      slides.findIndex((s) => s.classList.contains('is-active')),
+    );
+    let timer = 0;
+    let hovered = false;
+    let focused = false;
+
+    const render = () => {
+      slides.forEach((slide, i) => {
+        const active = i === index;
+        slide.classList.toggle('is-active', active);
+        if (active) slide.removeAttribute('aria-hidden');
+        else slide.setAttribute('aria-hidden', 'true');
+      });
+      dots.forEach((dot, i) => dot.setAttribute('aria-current', i === index ? 'true' : 'false'));
+    };
+
+    const go = (i) => {
+      index = (i + slides.length) % slides.length;
+      render();
+    };
+
+    const stop = () => {
+      if (timer) {
+        clearInterval(timer);
+        timer = 0;
+      }
+    };
+    // Never auto-advance under reduced motion.
+    const start = () => {
+      if (reduce.matches) return;
+      stop();
+      timer = window.setInterval(() => go(index + 1), INTERVAL);
+    };
+    const maybeStart = () => {
+      if (!hovered && !focused && !document.hidden) start();
+    };
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        go(i);
+        // jump, then briefly pause (restart the timer from here)
+        stop();
+        maybeStart();
+      });
+    });
+
+    // Pause on hover and focus-within; resume only when the pointer/focus leaves.
+    root.addEventListener('mouseenter', () => {
+      hovered = true;
+      stop();
+    });
+    root.addEventListener('mouseleave', () => {
+      hovered = false;
+      maybeStart();
+    });
+    root.addEventListener('focusin', () => {
+      focused = true;
+      stop();
+    });
+    root.addEventListener('focusout', (e) => {
+      if (!root.contains(e.relatedTarget)) {
+        focused = false;
+        maybeStart();
+      }
+    });
+
+    // Stop ticking while the tab is hidden (data/battery friendly).
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stop();
+      else maybeStart();
+    });
+
+    // React if the user toggles the reduced-motion preference live.
+    if (reduce.addEventListener) {
+      reduce.addEventListener('change', () => {
+        stop();
+        maybeStart();
+      });
+    }
+
+    render();
+    maybeStart();
+  });
+</script>

@@ -1,0 +1,125 @@
+---
+/**
+ * FAQ — native <details>/<summary> accordion (zero-JS, keyboard + SR accessible).
+ * Collapsed by default (no `open`). Neomorphic rows; chevron rotates on open.
+ * Copy is verbatim-grounded from COPY_BRIEF.md — do not edit answers.
+ */
+import Section from './primitives/Section.astro';
+import Icon from './primitives/Icon.astro';
+
+const faqs: { q: string; a: string }[] = [
+  {
+    q: 'What is Fauran?',
+    a: "Pakistan's bid-and-book marketplace for verified plumbers, electricians, AC techs and other skilled pros. Post a job, nearby pros bid, and you pick the best one.",
+  },
+  {
+    q: 'How is it different from other home-services apps?',
+    a: 'Others set the price for you. On Fauran, you post what you need and pros bid — so you compare and negotiate.',
+  },
+  {
+    q: 'Where is Fauran available?',
+    a: 'Launching in Lahore and Islamabad first, then expanding city by city.',
+  },
+  {
+    q: 'How do I pay?',
+    a: 'In cash, directly to the professional, once the work is done. Fauran never handles your cash.',
+  },
+  {
+    q: 'Are the professionals verified?',
+    a: 'Yes. Every pro passes CNIC and selfie identity verification before they can take work.',
+  },
+  {
+    q: 'How does a job get marked complete?',
+    a: 'You share a private 4-digit code with the pro to confirm the work is done. No code, no close.',
+  },
+  {
+    q: 'Is it free to join the waitlist?',
+    a: "Yes. Leave your number and we'll text you when Fauran opens near you.",
+  },
+  {
+    q: 'When does it launch?',
+    a: "We're finalising our first launch areas now. Join the waitlist and we'll text you the moment it's live near you.",
+  },
+];
+---
+
+<Section id="faq" eyebrow="FAQ" heading="Questions, answered." align="start">
+  <div class="faq-list">
+    {
+      faqs.map((item, i) => (
+        <details class="faq-item neo-raised-sm" data-reveal style={`--i:${i}`}>
+          <summary class="faq-summary">
+            <span class="faq-q">{item.q}</span>
+            <span class="faq-chevron" aria-hidden="true">
+              <Icon name="chevron-down" size={22} />
+            </span>
+          </summary>
+          <div class="faq-answer">
+            <p>{item.a}</p>
+          </div>
+        </details>
+      ))
+    }
+  </div>
+</Section>
+
+<style>
+  .faq-list {
+    display: grid;
+    gap: 0.85rem;
+    max-width: 46rem;
+  }
+
+  .faq-item {
+    /* .neo-raised-sm supplies surface fill, dual-light shadow, radius-md */
+    overflow: hidden;
+  }
+
+  .faq-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 3rem; /* ≥44px tappable header */
+    padding: 1.05rem 1.15rem;
+    cursor: pointer;
+    list-style: none; /* Firefox marker */
+    color: var(--color-ink);
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  /* remove the default disclosure triangle */
+  .faq-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-q {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-wrap: balance;
+  }
+
+  .faq-summary:hover .faq-q {
+    color: var(--color-forest);
+  }
+
+  .faq-chevron {
+    flex: none;
+    display: inline-flex;
+    color: var(--color-forest);
+    transition: transform 0.25s var(--ease-quint);
+  }
+  /* rotate the chevron when the row is open (transition respects
+     prefers-reduced-motion via global CSS) */
+  .faq-item[open] .faq-chevron {
+    transform: rotate(180deg);
+  }
+
+  .faq-answer {
+    padding: 0 1.15rem 1.2rem;
+    color: var(--color-ink-soft);
+  }
+  .faq-answer p {
+    max-width: 62ch;
+  }
+</style>

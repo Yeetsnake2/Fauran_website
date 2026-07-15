@@ -1,0 +1,232 @@
+---
+/**
+ * Footer — neomorphic/flat (owns NO glass). Brand + blurb + final CTA,
+ * on-page nav, contact block, and a bottom bar.
+ * Every unknown contact detail renders the LITERAL [PLACEHOLDER] — no invented
+ * emails, phones, handles, addresses, or registration numbers.
+ */
+import Logo from './primitives/Logo.astro';
+import Button from './primitives/Button.astro';
+
+const navLinks: { label: string; href: string }[] = [
+  { label: 'How it works', href: '#how' },
+  { label: 'Trust', href: '#trust' },
+  { label: 'FAQ', href: '#faq' },
+  { label: 'Join', href: '#waitlist' },
+];
+
+// Unknown — kept as the literal placeholder string until real details exist.
+const PLACEHOLDER = '[PLACEHOLDER]';
+const contact: { label: string; value: string }[] = [
+  { label: 'Email', value: PLACEHOLDER },
+  { label: 'Phone', value: PLACEHOLDER },
+];
+const socials: { label: string; value: string }[] = [
+  { label: 'Instagram', value: PLACEHOLDER },
+  { label: 'Facebook', value: PLACEHOLDER },
+  { label: 'WhatsApp', value: PLACEHOLDER },
+];
+const year = 2026;
+---
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <!-- Brand + blurb + final CTA -->
+    <div class="footer-brand">
+      <Logo variant="full" size={30} />
+      <p class="footer-tagline">Ab Kam Hoga, Fauran.</p>
+      <p class="footer-blurb">
+        Pakistan's bid-and-book services marketplace. Lahore &amp; Islamabad first.
+      </p>
+      <Button href="#waitlist">Join the waitlist</Button>
+    </div>
+
+    <!-- On-page navigation -->
+    <nav class="footer-col" aria-label="Footer">
+      <h2 class="footer-heading">Explore</h2>
+      <ul class="footer-links">
+        {
+          navLinks.map((link) => (
+            <li>
+              <a href={link.href}>{link.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <!-- Contact -->
+    <div class="footer-col">
+      <h2 class="footer-heading">Contact</h2>
+      <ul class="footer-contact">
+        {
+          contact.map((row) => (
+            <li>
+              <span class="footer-contact-label">{row.label}</span>
+              <span class="footer-placeholder">{row.value}</span>
+            </li>
+          ))
+        }
+        {
+          socials.map((row) => (
+            <li>
+              <span class="footer-contact-label">{row.label}</span>
+              <span class="footer-placeholder">{row.value}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="wrap footer-bottom">
+    <div class="footer-bottom-legal">
+      <span>&copy; {year} Fauran.</span>
+      <span class="footer-reg">
+        Company registration: <span class="footer-placeholder">{PLACEHOLDER}</span>
+      </span>
+    </div>
+    <div class="footer-bottom-links">
+      <a href={PLACEHOLDER}>Privacy</a>
+      <a href={PLACEHOLDER}>Terms</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--color-line);
+    padding-block: clamp(2.75rem, 7vw, 4.5rem) clamp(1.5rem, 4vw, 2.25rem);
+    color: var(--color-ink-soft);
+  }
+
+  /* stacked on mobile → multi-column from lg (1024) */
+  .footer-inner {
+    display: grid;
+    gap: clamp(2rem, 6vw, 3rem);
+  }
+  @media (min-width: 1024px) {
+    .footer-inner {
+      grid-template-columns: 1.6fr 1fr 1.2fr;
+      gap: 2.5rem;
+    }
+  }
+
+  .footer-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+    max-width: 30rem;
+  }
+  .footer-tagline {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    font-size: 1.25rem;
+    color: var(--color-ink);
+  }
+  .footer-blurb {
+    color: var(--color-ink-soft);
+    max-width: 34ch;
+  }
+  .footer-brand :global(.btn) {
+    margin-top: 0.35rem;
+  }
+
+  .footer-heading {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-forest);
+    margin-bottom: 1rem;
+  }
+
+  .footer-links,
+  .footer-contact {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .footer-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem; /* comfortable tap target */
+    color: var(--color-ink-soft);
+    font-weight: 500;
+    transition: color 0.16s ease;
+  }
+  .footer-links a:hover {
+    color: var(--color-forest);
+  }
+
+  .footer-contact li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+  .footer-contact-label {
+    color: var(--color-ink-soft);
+    font-weight: 600;
+    min-width: 5.5rem;
+  }
+  /* make unknown values read clearly as unfilled placeholders */
+  .footer-placeholder {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--color-ink-faint);
+    letter-spacing: -0.01em;
+  }
+
+  .footer-bottom {
+    margin-top: clamp(2rem, 6vw, 3rem);
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-line);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    font-size: 0.9rem;
+    color: var(--color-ink-faint);
+  }
+  .footer-bottom-legal {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .footer-bottom-links {
+    display: flex;
+    gap: 1.5rem;
+  }
+  .footer-bottom-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--color-ink-soft);
+    font-weight: 500;
+    transition: color 0.16s ease;
+  }
+  .footer-bottom-links a:hover {
+    color: var(--color-forest);
+  }
+
+  @media (min-width: 640px) {
+    .footer-bottom {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-bottom-legal {
+      flex-direction: row;
+      align-items: center;
+      gap: 1.25rem;
+    }
+  }
+</style>

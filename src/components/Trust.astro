@@ -1,0 +1,181 @@
+---
+/**
+ * Trust — the highest-stakes conversion section.
+ * Three neomorphic pillars + one glass "verified" credential badge (glass #3 on
+ * the page) + a full-width neomorphic reassurance band. Glass is used here for
+ * ONLY the verified badge; everything else is neomorphic/flat.
+ */
+import Section from './primitives/Section.astro';
+import NeoCard from './primitives/NeoCard.astro';
+import GlassCard from './primitives/GlassCard.astro';
+import Icon from './primitives/Icon.astro';
+
+// Illustrative sample completion code — decorative only (aria-hidden).
+const sampleCode = ['5', '7', '3', '1'];
+---
+
+<Section
+  id="trust"
+  eyebrow="Built-in trust"
+  heading="Strangers in your home? Not on Fauran."
+  lead="Every professional is identity-verified before they can bid — and you stay in control of the money and the moment a job is done."
+>
+  <div class="trust-inner">
+    <!-- Glass credential badge (glass element #3) — a live-looking stamp -->
+    <GlassCard sheen pad="sm" class="verified-badge">
+      <Icon name="shield-check" size={20} class="text-forest" />
+      <span class="verified-badge__label">CNIC + selfie verified</span>
+    </GlassCard>
+
+    <!-- Three trust pillars: stack on mobile → 3-col at lg -->
+    <div class="pillars">
+      <NeoCard class="pillar" data-reveal style="--i:0">
+        <span class="pillar__icon"><Icon name="shield-check" size={26} class="text-forest" /></span>
+        <h3 class="t-h3 pillar__title">CNIC + selfie verified</h3>
+        <p class="pillar__body">
+          Every pro passes manual identity review — CNIC front and back, plus a selfie
+          face-match — before they can take work. Documents are encrypted and never public.
+        </p>
+      </NeoCard>
+
+      <NeoCard class="pillar" data-reveal style="--i:1">
+        <span class="pillar__icon"><Icon name="wallet" size={26} class="text-forest" /></span>
+        <h3 class="t-h3 pillar__title">A wallet that keeps pros accountable</h3>
+        <p class="pillar__body">
+          Pros fund a prepaid wallet before they can bid, so only committed, real
+          professionals are in the pool — and your cash stays between you and the pro.
+        </p>
+      </NeoCard>
+
+      <NeoCard class="pillar" data-reveal style="--i:2">
+        <span class="pillar__icon"><Icon name="key" size={26} class="text-forest" /></span>
+        <h3 class="t-h3 pillar__title">You hold the completion code</h3>
+        <p class="pillar__body">
+          A job only closes when you share a private 4-digit code with the pro. No code,
+          no close — you confirm the work is done.
+        </p>
+        <div class="code-tiles" aria-hidden="true">
+          {sampleCode.map((d) => <span class="code-tile neo-raised-sm data">{d}</span>)}
+        </div>
+      </NeoCard>
+    </div>
+
+    <!-- Full-width reassurance band (neomorphic, not glass) -->
+    <NeoCard size="lg" pad="lg" class="reassure">
+      <span class="reassure__icon"><Icon name="wallet" size={26} class="text-forest" /></span>
+      <p class="reassure__text">
+        <strong>Fauran never touches your cash.</strong>
+        <span class="reassure__rest"> You pay the pro directly, in full, when the work is done.</span>
+      </p>
+    </NeoCard>
+  </div>
+</Section>
+
+<style>
+  .trust-inner {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.5rem, 4vw, 2.25rem);
+  }
+
+  /* Glass verified badge — floats above the pillars, right-aligned on desktop */
+  .verified-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    align-self: flex-start;
+    width: fit-content;
+    max-width: 100%;
+  }
+  .verified-badge__label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--color-ink);
+    white-space: nowrap;
+  }
+
+  /* Pillars */
+  .pillars {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(1rem, 3vw, 1.4rem);
+  }
+  .pillar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .pillar__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    box-shadow: var(--neo-inset);
+  }
+  .pillar__title {
+    margin-top: 0.15rem;
+  }
+  .pillar__body {
+    color: var(--color-ink-soft);
+  }
+
+  /* Completion-code digit tiles (decorative sample) */
+  .code-tiles {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.35rem;
+  }
+  .code-tile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 3rem;
+    font-size: 1.25rem;
+    color: var(--color-ink);
+  }
+
+  /* Reassurance band */
+  .reassure {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .reassure__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    flex: none;
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    box-shadow: var(--neo-raised-sm);
+  }
+  .reassure__text {
+    flex: 1 1 16rem;
+    font-size: clamp(1.1rem, 2.6vw, 1.4rem);
+    line-height: 1.4;
+    color: var(--color-ink-soft);
+  }
+  .reassure__text strong {
+    display: inline;
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+  }
+
+  @media (min-width: 1024px) {
+    .verified-badge {
+      align-self: flex-end;
+    }
+    .pillars {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

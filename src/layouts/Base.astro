@@ -1,0 +1,99 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = 'Fauran — Ab Kam Hoga, Fauran',
+  description = "Post a job, nearby verified pros bid, you book the best one. Plumbers, electricians, AC techs and more — Lahore & Islamabad. Join the Fauran waitlist.",
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://fauran.pk').toString();
+---
+
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <!-- Paint the canvas color immediately to avoid a white flash before CSS loads -->
+    <meta name="theme-color" content="#e7ede9" />
+    <style is:inline>
+      html {
+        background: #e7ede9;
+      }
+    </style>
+    <script is:inline>
+      // Mark JS-available so scroll-reveal only hides content when it can un-hide it.
+      document.documentElement.classList.add('js');
+    </script>
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+
+    <!-- Social — replace og.svg with a 1200×630 raster before launch (see README) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Fauran" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content="/og.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content="/og.svg" />
+
+    <meta name="generator" content={Astro.generator} />
+  </head>
+  <body>
+    <a href="#waitlist" class="skip-link">Skip to the waitlist</a>
+    <slot />
+
+    <script>
+      // Shared scroll-reveal — adds .in-view to [data-reveal] once, on entry.
+      const els = document.querySelectorAll<HTMLElement>('[data-reveal]');
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce || !('IntersectionObserver' in window)) {
+        els.forEach((el) => el.classList.add('in-view'));
+      } else {
+        const io = new IntersectionObserver(
+          (entries, obs) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                e.target.classList.add('in-view');
+                obs.unobserve(e.target);
+              }
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
+        );
+        els.forEach((el) => io.observe(el));
+      }
+    </script>
+
+    <style>
+      .skip-link {
+        position: fixed;
+        top: 0.75rem;
+        left: 0.75rem;
+        z-index: 100;
+        padding: 0.7rem 1.1rem;
+        border-radius: var(--radius-pill);
+        background: var(--color-forest);
+        color: #fff;
+        font-weight: 600;
+        transform: translateY(-160%);
+        transition: transform 0.2s var(--ease-out);
+      }
+      .skip-link:focus {
+        transform: translateY(0);
+      }
+    </style>
+  </body>
+</html>

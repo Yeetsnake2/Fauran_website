@@ -1,0 +1,128 @@
+---
+/**
+ * Hero — the signature moment. Beside the value proposition, a neomorphic phone
+ * crossfades through real Fauran app screens (sign-in → home → post a task →
+ * offer → tasker view), so visitors see the actual product, not an abstraction.
+ * Copy is grounded in COPY_BRIEF.md; tokens/recipes only.
+ *
+ * The phone (PhoneMockup) uses no glass/backdrop-blur — the screenshots are
+ * opaque — so the hero stays well within the page's blur budget.
+ */
+import Logo from './primitives/Logo.astro';
+import Icon from './primitives/Icon.astro';
+import Button from './primitives/Button.astro';
+import PhoneMockup from './PhoneMockup.astro';
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="wrap hero-wrap">
+    <!-- 1 · top row: brand + launch region -->
+    <div class="hero-top">
+      <Logo variant="full" size={32} animated />
+      <span class="chip"><Icon name="pin" size={16} /> Lahore &amp; Islamabad</span>
+    </div>
+
+    <div class="hero-grid">
+      <!-- text block -->
+      <div class="hero-copy">
+        <span class="eyebrow">Ab Kam Hoga, Fauran</span>
+        <h1 id="hero-title" class="t-hero">
+          Name your need. Pros <span class="text-forest">bid</span>. You book.
+        </h1>
+        <p class="t-lead">
+          Fauran connects you with CNIC-verified plumbers, electricians, AC techs and more in
+          Lahore &amp; Islamabad. Post a job, then compare real offers — price, arrival time, and
+          rating — in minutes.
+        </p>
+
+        <div class="hero-cta">
+          <Button href="#waitlist" class="w-full sm:w-auto">
+            Join the waitlist <Icon name="arrow-right" size={18} />
+          </Button>
+          <Button href="#how" variant="ghost" class="w-full sm:w-auto">
+            See how it works
+          </Button>
+        </div>
+
+        <p class="hero-micro text-ink-faint">
+          Free to join · We'll text you the moment Fauran opens near you.
+        </p>
+      </div>
+
+      <!-- real Fauran app screens in a neomorphic phone -->
+      <PhoneMockup class="hero-art" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    min-height: 100svh;
+    display: flex;
+  }
+  .hero-wrap {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100svh;
+    padding-block: clamp(1.1rem, 3.5vh, 1.9rem);
+    gap: clamp(1.4rem, 4vh, 2.4rem);
+  }
+
+  .hero-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .hero-grid {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(2rem, 7vw, 3.5rem);
+  }
+
+  .hero-copy {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1rem, 3vw, 1.35rem);
+    max-width: 40rem;
+  }
+  .hero-copy .t-hero {
+    max-width: 15ch;
+  }
+  .hero-cta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.25rem;
+  }
+  .hero-micro {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  /* — desktop: text left, phone right, vertically centered — */
+  @media (min-width: 640px) {
+    .hero-cta {
+      flex-direction: row;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+  }
+  @media (min-width: 1024px) {
+    .hero-grid {
+      flex-direction: row;
+      align-items: center;
+    }
+    .hero-copy {
+      flex: 1 1 52%;
+    }
+    .hero-art {
+      flex: 1 1 48%;
+      min-width: 0;
+    }
+  }
+</style>

@@ -1,0 +1,337 @@
+---
+/**
+ * Waitlist — the signup FORM. Neomorphic card (NOT glass). Talks ONLY to
+ * submitWaitlist() from ../lib/waitlist. Client validation, honeypot, timing,
+ * rate-limiting and the write are all handled by the lib — this component just
+ * collects input and renders the typed result.
+ */
+import Section from './primitives/Section.astro';
+import NeoCard from './primitives/NeoCard.astro';
+import Button from './primitives/Button.astro';
+import Icon from './primitives/Icon.astro';
+---
+
+<Section
+  id="waitlist"
+  eyebrow="Join the waitlist"
+  heading="Be first when Fauran opens near you."
+  lead="Leave your number and we'll text you the moment we launch in your area. Free to join, no spam."
+>
+  <div class="wl-shell" data-reveal>
+    <NeoCard size="lg" pad="lg">
+      <form id="wl-form" novalidate>
+        <!-- Phone (primary field) -->
+        <div class="form-row">
+          <label class="form-label" for="wl-phone">Phone number</label>
+          <div class="phone-field">
+            <span class="phone-prefix data">+92</span>
+            <input
+              id="wl-phone"
+              class="field phone-input"
+              type="tel"
+              inputmode="tel"
+              autocomplete="tel"
+              name="phone"
+              placeholder="03XX XXXXXXX"
+              required
+              aria-describedby="wl-phone-hint"
+            />
+          </div>
+          <p id="wl-phone-hint" class="form-hint">Pakistani mobile — this is where we'll text your launch invite.</p>
+        </div>
+
+        <!-- Role toggle -->
+        <fieldset class="form-row role-group">
+          <legend class="form-label">I want to…</legend>
+          <div class="segmented">
+            <label class="seg">
+              <input type="radio" name="role" value="hirer" checked />
+              <span>Hire a pro</span>
+            </label>
+            <label class="seg">
+              <input type="radio" name="role" value="pro" />
+              <span>Work as a pro</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- City (optional) -->
+        <div class="form-row">
+          <label class="form-label" for="wl-city">City</label>
+          <div class="select-wrap">
+            <select id="wl-city" class="field select-field" name="city">
+              <option value="">City (optional)</option>
+              <option value="Lahore">Lahore</option>
+              <option value="Islamabad">Islamabad</option>
+              <option value="Other">Other</option>
+            </select>
+            <span class="select-chevron" aria-hidden="true"><Icon name="chevron-down" size={20} /></span>
+          </div>
+        </div>
+
+        <!-- Honeypot: named exactly `website`, off-screen (NOT display:none), untabbable -->
+        <div class="hp-field" aria-hidden="true">
+          <label for="wl-website">Your website</label>
+          <input id="wl-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <div class="form-actions">
+          <!-- Error region — always rendered so it's a reliable live region -->
+          <p id="wl-error" class="wl-error" role="alert" aria-live="polite"></p>
+
+          <Button id="wl-submit" type="submit" fullWidth>Join the waitlist</Button>
+
+          <p class="form-fineprint">We'll only text you about launch. Standard rates may apply.</p>
+        </div>
+      </form>
+    </NeoCard>
+
+    <!-- Success panel (neomorphic), revealed by JS in place of the form -->
+    <div id="wl-success" class="wl-success" hidden>
+      <NeoCard size="lg" pad="lg">
+        <div class="wl-success__inner">
+          <span class="wl-success__icon"><Icon name="check" size={26} class="text-forest" /></span>
+          <h3 id="wl-success-heading" class="t-h3" tabindex="-1">You're on the list.</h3>
+          <p class="wl-success__body">We'll text you the moment Fauran opens in your area.</p>
+        </div>
+      </NeoCard>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .wl-shell {
+    max-width: 34rem;
+    margin-inline: auto;
+  }
+
+  #wl-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.35rem;
+  }
+
+  .form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+  }
+  .form-label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--color-ink);
+  }
+  .form-hint {
+    font-size: 0.875rem;
+    color: var(--color-ink-faint);
+  }
+
+  /* Phone field — prominent, with a visible +92 affordance */
+  .phone-field {
+    display: flex;
+    align-items: stretch;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+  .phone-prefix {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    min-width: 3.5rem;
+    padding-inline: 0.9rem;
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    box-shadow: var(--neo-raised-sm);
+    color: var(--color-ink-soft);
+    font-size: 1rem;
+  }
+  .phone-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 1.05rem;
+  }
+
+  /* Role toggle — accessible radios styled as a segmented control */
+  .role-group .segmented {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+  }
+  .seg {
+    position: relative;
+    display: block;
+  }
+  /* radios visually hidden but keyboard-accessible */
+  .seg input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    margin: 0;
+  }
+  .seg span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    min-height: 3rem;
+    padding: 0.6rem 0.9rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    box-shadow: var(--neo-raised-sm);
+    color: var(--color-ink-soft);
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition:
+      box-shadow 0.16s var(--ease-out),
+      color 0.16s ease,
+      transform 0.16s var(--ease-quint);
+  }
+  .seg:hover span {
+    color: var(--color-forest);
+  }
+  .seg input:checked + span {
+    box-shadow: var(--neo-pressed);
+    color: var(--color-forest);
+  }
+  .seg input:focus-visible + span {
+    outline: 3px solid var(--color-forest);
+    outline-offset: 3px;
+  }
+
+  /* City select */
+  .select-wrap {
+    position: relative;
+    min-width: 0;
+  }
+  .select-field {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 2.75rem;
+    cursor: pointer;
+  }
+  .select-chevron {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--color-ink-soft);
+  }
+
+  /* Honeypot — off-screen, present in DOM, not display:none */
+  .hp-field {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  /* Error + fine print */
+  .form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .wl-error {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--color-danger);
+    margin: 0;
+  }
+  .form-fineprint {
+    font-size: 0.875rem;
+    color: var(--color-ink-faint);
+    text-align: center;
+  }
+
+  /* Success panel */
+  .wl-success__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.6rem;
+  }
+  .wl-success__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    box-shadow: var(--neo-raised-sm);
+    margin-bottom: 0.25rem;
+  }
+  .wl-success__icon :global(.icon) {
+    color: var(--color-forest);
+  }
+  .wl-success__body {
+    color: var(--color-ink-soft);
+  }
+  #wl-success-heading:focus-visible {
+    outline: 3px solid var(--color-forest);
+    outline-offset: 4px;
+  }
+</style>
+
+<script>
+  import { submitWaitlist, type WaitlistCity, type WaitlistRole } from '../lib/waitlist';
+
+  const form = document.getElementById('wl-form') as HTMLFormElement | null;
+
+  if (form) {
+    // Anti-bot timing: measure from form render to submit.
+    const renderStart = Date.now();
+
+    const submitBtn = document.getElementById('wl-submit') as HTMLButtonElement | null;
+    const phoneInput = document.getElementById('wl-phone') as HTMLInputElement | null;
+    const errorEl = document.getElementById('wl-error');
+    const successEl = document.getElementById('wl-success');
+    const successHeading = document.getElementById('wl-success-heading');
+    const defaultLabel = submitBtn?.textContent ?? 'Join the waitlist';
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (errorEl) errorEl.textContent = '';
+
+      const phone = phoneInput?.value.trim() ?? '';
+      const roleEl = form.querySelector<HTMLInputElement>('input[name="role"]:checked');
+      const role: WaitlistRole = roleEl?.value === 'pro' ? 'pro' : 'hirer';
+      const city = (form.querySelector<HTMLSelectElement>('select[name="city"]')?.value ?? '') as WaitlistCity;
+      const website = form.querySelector<HTMLInputElement>('input[name="website"]')?.value ?? '';
+      const elapsedMs = Date.now() - renderStart;
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.setAttribute('aria-busy', 'true');
+        submitBtn.textContent = 'Joining…';
+      }
+
+      const res = await submitWaitlist({ phone, role, city, website, source: 'waitlist', elapsedMs });
+
+      if (res.ok) {
+        form.hidden = true;
+        if (successEl) successEl.hidden = false;
+        // Move focus into the confirmation so screen-reader users hear it.
+        successHeading?.focus();
+      } else {
+        if (errorEl) errorEl.textContent = res.message;
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.removeAttribute('aria-busy');
+          submitBtn.textContent = defaultLabel;
+        }
+        if (res.reason === 'invalid-phone') phoneInput?.focus();
+      }
+    });
+  }
+</script>

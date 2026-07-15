@@ -1,0 +1,44 @@
+---
+/**
+ * Button / link. Renders <a> when `href` is set, else <button>.
+ * variant: 'primary' (green pill) | 'ghost' (neomorphic secondary).
+ * Always ≥44px touch target via the .btn class.
+ */
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'ghost';
+  type?: 'button' | 'submit';
+  class?: string;
+  id?: string;
+  fullWidth?: boolean;
+  [key: string]: unknown;
+}
+const {
+  href,
+  variant = 'primary',
+  type = 'button',
+  class: className = '',
+  id,
+  fullWidth = false,
+  ...rest
+} = Astro.props;
+const cls = ['btn', variant === 'ghost' ? 'btn-ghost' : '', fullWidth ? 'is-full' : '', className];
+---
+
+{
+  href ? (
+    <a href={href} id={id} class:list={cls} {...rest}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} id={id} class:list={cls} {...rest}>
+      <slot />
+    </button>
+  )
+}
+
+<style>
+  .is-full {
+    width: 100%;
+  }
+</style>

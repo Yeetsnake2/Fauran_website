@@ -1,0 +1,123 @@
+---
+/**
+ * StickyCta — the persistent "Join the waitlist" affordance (glass element #2).
+ * Full-width slim glass bar pinned to the bottom on mobile (safe-area aware);
+ * a compact floating pill bottom-right on desktop. Revealed only after the user
+ * scrolls past the hero, and hidden whenever the #waitlist section is on screen.
+ */
+import Button from './primitives/Button.astro';
+---
+
+<div id="sticky-cta" class="sticky-cta glass" data-visible="false" aria-hidden="true">
+  <div class="sticky-cta__inner">
+    <span class="sticky-cta__label">Ready to skip the phone calls?</span>
+    <Button href="#waitlist" class="sticky-cta__btn">Join the waitlist</Button>
+  </div>
+</div>
+
+<style>
+  .sticky-cta {
+    position: fixed;
+    z-index: 40;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* slim bar; keep clear of the iOS home indicator */
+    padding: 0.7rem clamp(1rem, 5vw, 1.5rem);
+    padding-bottom: calc(0.7rem + env(safe-area-inset-bottom, 0px));
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    /* hidden by default: slide down + fade, non-focusable */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(120%);
+    transition:
+      transform 0.32s var(--ease-quint),
+      opacity 0.32s var(--ease-out),
+      visibility 0.32s linear;
+    pointer-events: none;
+  }
+  .sticky-cta[data-visible='true'] {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  .sticky-cta__inner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    max-width: 72rem;
+    margin-inline: auto;
+  }
+  .sticky-cta__label {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-weight: 600;
+    font-size: 0.95rem;
+    line-height: 1.25;
+    color: var(--color-ink);
+  }
+  .sticky-cta__btn {
+    flex: 0 0 auto;
+  }
+
+  /* Desktop: detach into a compact floating pill, bottom-right */
+  @media (min-width: 1024px) {
+    .sticky-cta {
+      left: auto;
+      right: clamp(1rem, 3vw, 2rem);
+      bottom: clamp(1rem, 3vw, 2rem);
+      width: auto;
+      max-width: 28rem;
+      padding: 0.7rem 0.7rem 0.7rem 1.25rem;
+      border-radius: var(--radius-pill);
+    }
+    .sticky-cta__label {
+      white-space: nowrap;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sticky-cta {
+      transition: opacity 0.2s linear, visibility 0.2s linear;
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  const cta = document.getElementById('sticky-cta');
+  const waitlist = document.getElementById('waitlist');
+
+  if (cta) {
+    let pastHero = false;
+    let waitlistVisible = false;
+
+    const apply = () => {
+      const show = pastHero && !waitlistVisible;
+      cta.setAttribute('data-visible', show ? 'true' : 'false');
+      cta.setAttribute('aria-hidden', show ? 'false' : 'true');
+    };
+
+    // Reveal only after the user has scrolled roughly past the hero.
+    const onScroll = () => {
+      pastHero = window.scrollY > window.innerHeight * 0.7;
+      apply();
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    // Hide while the waitlist form is on screen (don't compete with it).
+    if (waitlist && 'IntersectionObserver' in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) waitlistVisible = entry.isIntersecting;
+          apply();
+        },
+        { threshold: 0.01 },
+      );
+      io.observe(waitlist);
+    }
+  }
+</script>

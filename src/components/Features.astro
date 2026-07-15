@@ -1,0 +1,183 @@
+---
+/**
+ * Features — "Why Fauran"
+ * Bento grid of neomorphic feature cards led by the wedge (name-your-price),
+ * closed by a full-width "cash, paid directly" reassurance, plus a trades chip
+ * row. Neomorphic/flat only — owns no glass. Copy grounded in COPY_BRIEF.md.
+ * No marigold: it is reserved for prices, and no price is shown here.
+ */
+import Section from './primitives/Section.astro';
+import NeoCard from './primitives/NeoCard.astro';
+import Icon from './primitives/Icon.astro';
+
+type IconName = 'spark' | 'pin' | 'star' | 'chat' | 'shield-check' | 'wallet';
+
+const features: {
+  icon: IconName;
+  title: string;
+  desc: string;
+  span?: 'wedge' | 'wide';
+}[] = [
+  {
+    icon: 'spark',
+    title: 'Name your need, pros bid',
+    desc: "The only bid-and-negotiate model in Pakistani home services. You're in control of the price.",
+    span: 'wedge',
+  },
+  {
+    icon: 'pin',
+    title: 'Pros near you',
+    desc: 'Jobs go to verified pros inside your area, so help is genuinely nearby.',
+  },
+  {
+    icon: 'star',
+    title: 'Compare on more than price',
+    desc: 'Every bid shows price, arrival time, rating, and distance.',
+  },
+  {
+    icon: 'chat',
+    title: 'Negotiate in chat',
+    desc: "Counter the offer until it's right. The agreed price locks in when you accept.",
+  },
+  {
+    icon: 'shield-check',
+    title: 'Ratings that stick',
+    desc: 'Two-way reviews after every job build a track record you can trust.',
+  },
+  {
+    icon: 'wallet',
+    title: 'Cash, paid directly',
+    desc: 'You pay the pro in cash when the work is done. Fauran never touches your cash.',
+    span: 'wide',
+  },
+];
+
+const trades: { label: string; icon?: 'wrench' | 'bolt' }[] = [
+  { label: 'Plumber', icon: 'wrench' },
+  { label: 'Electrician', icon: 'bolt' },
+  { label: 'AC tech' },
+  { label: 'Carpenter' },
+  { label: 'Painter' },
+  { label: 'Handyman' },
+];
+---
+
+<Section
+  eyebrow="Why Fauran"
+  heading="The only marketplace where you name the price."
+  lead="Every other home-services app in Pakistan sets the price for you. On Fauran, pros bid for your job."
+>
+  <ul class="bento">
+    {
+      features.map((f, i) => (
+        <li class:list={['cell', f.span]} data-reveal style={`--i:${i}`}>
+          <NeoCard size="md" pad="lg" class="w-full">
+            <div class="feat">
+              <span class="feat-badge neo-inset text-forest">
+                <Icon name={f.icon} size={24} />
+              </span>
+              <h3 class="t-h3 feat-title">{f.title}</h3>
+              <p class="feat-desc text-ink-soft">{f.desc}</p>
+            </div>
+          </NeoCard>
+        </li>
+      ))
+    }
+  </ul>
+
+  <div class="trades" data-reveal style="--i:6">
+    <span class="trades-label">TRADES AT LAUNCH</span>
+    <ul class="chips">
+      {
+        trades.map((t) => (
+          <li>
+            <span class="chip">
+              {t.icon && <Icon name={t.icon} size={16} />}
+              {t.label}
+            </span>
+          </li>
+        ))
+      }
+      <li><span class="chip">+ more</span></li>
+    </ul>
+  </div>
+</Section>
+
+<style>
+  /* ---- Bento: 1 col → 2 col (sm) → 3 col (lg) with two emphasis spans ---- */
+  .bento {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: clamp(1rem, 3vw, 1.5rem);
+    grid-template-columns: 1fr;
+  }
+  .cell {
+    /* flex so the NeoCard stretches to equal row height */
+    display: flex;
+  }
+  .feat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    height: 100%;
+  }
+  .feat-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    flex: none;
+    margin-bottom: 0.15rem;
+  }
+  .feat-title {
+    font-family: var(--font-display);
+  }
+
+  @media (min-width: 640px) {
+    .bento {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .cell.wedge,
+    .cell.wide {
+      grid-column: span 2;
+    }
+  }
+  @media (min-width: 1024px) {
+    .bento {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .cell.wedge {
+      grid-column: span 2;
+    }
+    .cell.wide {
+      grid-column: span 3;
+    }
+  }
+
+  /* ---- Trades chip row ---- */
+  .trades {
+    margin-top: clamp(1.75rem, 5vw, 2.75rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+  .trades-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-forest);
+  }
+  .chips {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+</style>

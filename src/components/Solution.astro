@@ -1,0 +1,216 @@
+---
+/**
+ * Solution — "How it works" (id="how")
+ * Post → Bid → Book as an ordered set of neomorphic step tiles, followed by a
+ * full-width finish strip for "Done". Neomorphic/flat only — owns no glass.
+ * All copy is grounded verbatim in COPY_BRIEF.md.
+ */
+import Section from './primitives/Section.astro';
+import NeoCard from './primitives/NeoCard.astro';
+import Icon from './primitives/Icon.astro';
+
+type IconName = 'chat' | 'bolt' | 'check';
+
+const steps: { n: string; title: string; icon: IconName; desc: string }[] = [
+  {
+    n: '01',
+    title: 'Post',
+    icon: 'chat',
+    desc: 'Say what you need. Add a location, photos, and when you need it.',
+  },
+  {
+    n: '02',
+    title: 'Bid',
+    icon: 'bolt',
+    desc: 'Nearby verified pros send offers — their price and arrival time. Compare, or counter in chat.',
+  },
+  {
+    n: '03',
+    title: 'Book',
+    icon: 'check',
+    desc: 'Pick the bid that fits on price, rating, and distance. Track your pro on the way.',
+  },
+];
+
+const code = ['5', '7', '3', '1'];
+---
+
+<Section
+  id="how"
+  eyebrow="How it works"
+  heading="From posted to booked in three steps."
+  lead="Post what you need, let nearby pros come to you, and book the offer that fits."
+>
+  <ol class="steps">
+    {
+      steps.map((s, i) => (
+        <li class="step" data-reveal style={`--i:${i}`}>
+          <NeoCard size="md" pad="lg" class="w-full">
+            <div class="step-inner">
+              <div class="step-top">
+                <span class="step-num data text-forest">{s.n}</span>
+                <span class="step-badge neo-inset text-forest">
+                  <Icon name={s.icon} size={22} />
+                </span>
+              </div>
+              <h3 class="t-h3 step-title">{s.title}</h3>
+              <p class="step-desc text-ink-soft">{s.desc}</p>
+            </div>
+          </NeoCard>
+        </li>
+      ))
+    }
+  </ol>
+
+  <div class="finish" data-reveal style="--i:3">
+    <NeoCard size="lg" pad="lg" class="w-full">
+      <div class="finish-inner">
+        <span class="finish-badge neo-inset text-forest">
+          <Icon name="key" size={24} />
+        </span>
+        <div class="finish-copy">
+          <p class="finish-line">
+            Done — confirm with a private 4-digit code, pay in cash, and rate the work.
+          </p>
+          <p class="finish-note text-ink-soft">
+            Cash is paid directly to the pro. Fauran never touches your cash.
+          </p>
+        </div>
+        <div class="finish-code" aria-hidden="true">
+          {code.map((d) => <span class="code-digit data">{d}</span>)}
+        </div>
+      </div>
+    </NeoCard>
+  </div>
+</Section>
+
+<style>
+  /* ---- Step grid: single column → 3-col at lg with a connector rule ---- */
+  .steps {
+    --step-gap: clamp(1rem, 3vw, 1.5rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--step-gap);
+    grid-template-columns: 1fr;
+  }
+  .step {
+    /* flex so the NeoCard stretches to equal row height */
+    display: flex;
+    position: relative;
+  }
+  .step-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    height: 100%;
+  }
+  .step-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .step-num {
+    font-size: clamp(2.25rem, 7vw, 3rem);
+    line-height: 1;
+    font-weight: 500;
+  }
+  .step-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    flex: none;
+  }
+  .step-title {
+    font-family: var(--font-display);
+  }
+  .step-desc {
+    margin-top: 0.1rem;
+  }
+
+  @media (min-width: 1024px) {
+    .steps {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    /* thin connector rule sitting in the gap between cards */
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 100%;
+      width: var(--step-gap);
+      height: 2px;
+      transform: translateY(-50%);
+      background: var(--color-line-strong);
+      border-radius: 2px;
+    }
+  }
+
+  /* ---- Finish strip ---- */
+  .finish {
+    margin-top: clamp(1rem, 3vw, 1.5rem);
+    display: flex;
+  }
+  .finish-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.1rem;
+    width: 100%;
+  }
+  .finish-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    flex: none;
+  }
+  .finish-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .finish-line {
+    font-weight: 600;
+    font-size: clamp(1.05rem, 2.4vw, 1.25rem);
+    color: var(--color-ink);
+    line-height: 1.4;
+  }
+  .finish-code {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .code-digit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.75rem;
+    font-size: 1.15rem;
+    color: var(--color-forest);
+    /* neo-inset well look, inlined via tokens (kept minimal, no new values) */
+    background: var(--color-surface-sunken);
+    box-shadow: var(--neo-inset);
+    border-radius: var(--radius-sm);
+  }
+
+  /* From sm up the finish strip becomes a single row: badge · copy · code */
+  @media (min-width: 640px) {
+    .finish-inner {
+      flex-direction: row;
+      align-items: center;
+      gap: 1.25rem;
+    }
+    .finish-copy {
+      flex: 1;
+    }
+    .finish-code {
+      flex: none;
+    }
+  }
+</style>

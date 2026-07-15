@@ -1,0 +1,121 @@
+---
+/**
+ * Problem — three beats of the status-quo pain, plus a supply-side closing line.
+ * Copy grounded in COPY_BRIEF.md §2. Neomorphic/flat only (no glass here).
+ */
+import Section from './primitives/Section.astro';
+import NeoCard from './primitives/NeoCard.astro';
+import Icon from './primitives/Icon.astro';
+
+const beats = [
+  {
+    icon: 'phone',
+    title: 'Finding someone',
+    body: 'Asking around is the search engine. Whoever picks up the phone first gets the job — with no way to compare.',
+  },
+  {
+    icon: 'wallet',
+    title: 'Agreeing a price',
+    body: 'Rates are guesswork. Both sides only find out the real deal at the front door.',
+  },
+  {
+    icon: 'chat',
+    title: 'When it goes wrong',
+    body: 'No record of the agreement, no reviews, and no way to hold anyone to their word.',
+  },
+] as const;
+---
+
+<Section
+  id="problem"
+  eyebrow="The problem"
+  heading="Getting help still runs on phone calls and luck."
+  lead="Hiring a plumber or electrician in Pakistan is slow, informal, and opaque — every request follows the same frustrating pattern."
+>
+  <div class="beats">
+    {
+      beats.map((beat, i) => (
+        <div class="beat-item" data-reveal style={`--i:${i}`}>
+          <NeoCard size="md" pad="md" class="beat h-full">
+            <span class="beat-badge neo-inset">
+              <Icon name={beat.icon} size={22} />
+            </span>
+            <h3 class="t-h3 beat-title">{beat.title}</h3>
+            <p class="beat-body text-ink-soft">{beat.body}</p>
+          </NeoCard>
+        </div>
+      ))
+    }
+
+    <!-- supply-side closing line, full width -->
+    <div class="closing neo-inset" data-reveal style="--i:3">
+      <span class="closing-ic"><Icon name="wrench" size={20} /></span>
+      <p class="closing-text text-ink-soft">
+        And skilled pros? They have no reliable way to find nearby paying work — and get undercut by
+        middlemen.
+      </p>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .beats {
+    display: grid;
+    gap: clamp(1rem, 3vw, 1.4rem);
+  }
+
+  .beat-item {
+    min-width: 0;
+  }
+  .beat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .beat-badge {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    color: var(--color-forest);
+    margin-bottom: 0.35rem;
+  }
+  .beat-title {
+    color: var(--color-ink);
+  }
+  .beat-body {
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
+  .closing {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: clamp(1.1rem, 4vw, 1.5rem) clamp(1.15rem, 4vw, 1.6rem);
+  }
+  .closing-ic {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    box-shadow: var(--neo-raised-sm);
+    color: var(--color-forest);
+  }
+  .closing-text {
+    font-size: clamp(1rem, 2.4vw, 1.125rem);
+    line-height: 1.5;
+  }
+
+  @media (min-width: 1024px) {
+    .beats {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .closing {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

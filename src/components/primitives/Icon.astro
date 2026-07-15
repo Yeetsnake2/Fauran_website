@@ -1,0 +1,71 @@
+---
+/**
+ * Inline SVG icon set — no icon font, no external requests.
+ * 24px grid, 1.75 stroke, currentColor, rounded caps/joins.
+ * Add new icons here only; keep the set small.
+ */
+type IconName =
+  | 'wrench'
+  | 'bolt'
+  | 'pin'
+  | 'shield-check'
+  | 'chat'
+  | 'star'
+  | 'wallet'
+  | 'key'
+  | 'arrow-right'
+  | 'check'
+  | 'phone'
+  | 'chevron-down'
+  | 'spark';
+
+interface Props {
+  name: IconName;
+  size?: number;
+  class?: string;
+  stroke?: number;
+}
+const { name, size = 24, class: className = '', stroke = 1.75 } = Astro.props;
+
+const paths: Record<IconName, string> = {
+  wrench:
+    '<path d="M14.5 5.5a3.5 3.5 0 0 0-4.9 4.2L4 15.3V20h4.7l5.6-5.6a3.5 3.5 0 0 0 4.2-4.9l-2.3 2.3-2.2-.4-.4-2.2 2.3-2.3Z"/>',
+  bolt: '<path d="M13 3 5 13h5l-1 8 8-10h-5l1-8Z"/>',
+  pin: '<path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/>',
+  'shield-check': '<path d="M12 3 5 6v5c0 4.5 3 7.7 7 9 4-1.3 7-4.5 7-9V6l-7-3Z"/><path d="m9 11.5 2 2 4-4"/>',
+  chat: '<path d="M4 5h16v11H9l-4 3v-3H4V5Z"/>',
+  star: '<path d="m12 4 2.3 4.7 5.2.8-3.7 3.7.9 5.1L12 16l-4.6 2.4.9-5.1L4.6 9.5l5.2-.8L12 4Z"/>',
+  wallet:
+    '<path d="M4 7h13a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4V7Z"/><path d="M4 7V6a1 1 0 0 1 1-1h11"/><circle cx="15.5" cy="13" r="1.2" fill="currentColor" stroke="none"/>',
+  key: '<circle cx="8" cy="12" r="3.5"/><path d="M11 12h9m-3 0v3m-3-3v2"/>',
+  'arrow-right': '<path d="M5 12h14m-6-6 6 6-6 6"/>',
+  check: '<path d="m5 12 4.5 4.5L19 7"/>',
+  phone:
+    '<path d="M6 4h3l1.5 4-2 1.5a11 11 0 0 0 5 5l1.5-2 4 1.5V22a2 2 0 0 1-2 2A16 16 0 0 1 4 6a2 2 0 0 1 2-2Z"/>',
+  'chevron-down': '<path d="m6 9 6 6 6-6"/>',
+  spark: '<path d="M12 3v4m0 10v4m9-9h-4M7 12H3m13.5-6.5-2.8 2.8M9.3 14.7l-2.8 2.8m11 0-2.8-2.8M9.3 9.3 6.5 6.5"/>',
+};
+---
+
+<svg
+  class:list={['icon', className]}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width={stroke}
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  focusable="false"
+  set:html={paths[name]}
+/>
+
+<style>
+  .icon {
+    display: inline-block;
+    flex: none;
+    vertical-align: middle;
+  }
+</style>

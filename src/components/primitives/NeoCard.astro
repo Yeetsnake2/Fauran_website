@@ -1,0 +1,54 @@
+---
+/**
+ * Neomorphic raised tile — the default structural surface.
+ * Props:
+ *  - size: 'sm' | 'md' | 'lg' → shadow depth
+ *  - pad: padding scale
+ *  - as: element tag
+ *  - interactive: adds hover lift (use for cards that are links/buttons)
+ */
+interface Props {
+  size?: 'sm' | 'md' | 'lg';
+  pad?: 'sm' | 'md' | 'lg';
+  as?: string;
+  interactive?: boolean;
+  class?: string;
+}
+const { size = 'md', pad = 'md', as = 'div', interactive = false, class: className = '' } =
+  Astro.props;
+const Tag = as as keyof HTMLElementTagNameMap;
+const shadow = size === 'sm' ? 'neo-raised-sm' : size === 'lg' ? 'neo-raised-lg' : 'neo-raised';
+---
+
+<Tag class:list={['neo-card', shadow, `pad-${pad}`, { interactive }, className]}>
+  <slot />
+</Tag>
+
+<style>
+  .neo-card {
+    color: var(--color-ink);
+  }
+  .pad-sm {
+    padding: clamp(1rem, 3vw, 1.35rem);
+  }
+  .pad-md {
+    padding: clamp(1.35rem, 4vw, 1.9rem);
+  }
+  .pad-lg {
+    padding: clamp(1.75rem, 5vw, 2.75rem);
+  }
+  .neo-card.interactive {
+    transition:
+      transform 0.22s var(--ease-quint),
+      box-shadow 0.22s var(--ease-out);
+  }
+  .neo-card.interactive:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--neo-raised-lg);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .neo-card.interactive {
+      transition: none;
+    }
+  }
+</style>

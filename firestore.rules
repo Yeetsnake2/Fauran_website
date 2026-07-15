@@ -1,0 +1,46 @@
+rules_version = '2';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Fauran marketing-site security rules.
+//
+// Scope: the PUBLIC waitlist only. The `waitlist_signups` collection is
+// CREATE-ONLY from the client — no read, update, or delete is ever permitted
+// (signups are reviewed in the Firebase console / an authenticated admin tool).
+//
+// This file governs ONLY `waitlist_signups`. It must never be deployed to a
+// project that also hosts app data, and it deliberately denies everything else
+// as defense-in-depth. Do NOT add rules for app collections (users, bookings, …)
+// here — the marketing site must not touch them.
+// ─────────────────────────────────────────────────────────────────────────────
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /waitlist_signups/{docId} {
+      // Never readable/mutable from the client.
+      allow read, update, delete: if false;
+
+      // Create only when the payload is exactly the expected shape.
+      allow create: if isValidSignup(request.resource.data);
+    }
+
+    // Defense in depth: deny access to anything not explicitly matched above.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidSignup(d) {
+      return d.keys().hasOnly(['phone', 'role', 'city', 'source', 'userAgent', 'locale', 'createdAt'])
+        && d.keys().hasAll(['phone', 'role', 'city', 'source', 'userAgent', 'locale', 'createdAt'])
+        // Pakistani mobile: +92 then 10 digits starting with 3.
+        && d.phone is string && d.phone.matches('^[+]923[0-9]{9}$')
+        && d.role in ['hirer', 'pro']
+        && d.city is string && d.city.size() <= 40
+        && d.source is string && d.source.size() <= 60
+        && d.userAgent is string && d.userAgent.size() <= 300
+        && d.locale is string && d.locale.size() <= 20
+        // Force a server timestamp — clients cannot forge createdAt.
+        && d.createdAt == request.time;
+    }
+  }
+}
